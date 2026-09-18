@@ -25,7 +25,7 @@ public class Main {
                 .credentialsProvider(credentialsProvider)
                 .build()) {
             System.out.printf("""
-                    Conexão realiada com sucesso
+                    Conexão realizada com sucesso
                     Listando arquivos do bucket: %s
                     %n""", bucketName);
 
