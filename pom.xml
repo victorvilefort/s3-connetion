@@ -20,7 +20,7 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
-                <version>2.27.21</version> <!-- Versão estável e atualizada -->
+                <version>2.29.52</version> <!-- Atualizado para a versão mais recente -->
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -28,13 +28,13 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Dependência do Amazon S3 -->
+        <!-- Dependência do Amazon S3 (A versão é controlada pelo BOM acima) -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
         </dependency>
 
-        <!-- Opcional: Provedor HTTP recomendado para performance na AWS SDK v2 -->
+        <!-- Provedor HTTP recomendado para performance na AWS SDK v2 -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>apache-client</artifactId>
