@@ -4,6 +4,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 
+import static java.lang.Math.round;
+
 public class Main {
     public static void main(String[] args) {
 
@@ -30,14 +32,14 @@ public class Main {
                             ------------------------------
                             Arquivo %s | Tamanho: %s bytes
                             ------------------------------
-                            """.formatted(s3Object.key(), s3Object.size()));
+                            """.formatted(s3Object.key(), round(s3Object.size())));
                 });
 
                 System.out.println("Iniciando a leitura do arquivo...");
 
                 Reader reader = new Reader();
 
-                reader.readCSV(s3Client, bucketName, "victor.csv");
+                reader.readContent(s3Client, bucketName, "victor.csv");
             }
 
         } catch (Exception e) {
