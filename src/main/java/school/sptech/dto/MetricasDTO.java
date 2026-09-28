@@ -1,4 +1,4 @@
-package school.sptech;
+package school.sptech.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

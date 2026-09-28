@@ -1,8 +1,8 @@
-package school.sptech;
+package school.sptech.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -14,8 +14,8 @@ public class ResponseDTO {
     @JsonProperty private String empresa;
     @JsonProperty private String localizacao_km;
     @JsonProperty private String sentido;
-    @JsonProperty private Date timestamp;
-    @JsonProperty private List<MetricasDTO> metricas_monitoradas;
+    @JsonProperty private java.time.LocalDateTime timestamp;
+    @JsonProperty private List<MetricasDTO> metricas_monitorizadas;
 
     public ResponseDTO() {
     }
@@ -68,19 +68,19 @@ public class ResponseDTO {
         this.sentido = sentido;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 
-    public List<MetricasDTO> getMetricas_monitoradas() {
-        return metricas_monitoradas;
+    public List<MetricasDTO> getMetricas_monitorizadas() {
+        return metricas_monitorizadas;
     }
 
-    public void setMetricas_monitoradas(List<MetricasDTO> metricas_monitoradas) {
-        this.metricas_monitoradas = metricas_monitoradas;
+    public void setMetricas_monitorizaradas(List<MetricasDTO> metricas_monitorizaradas) {
+        this.metricas_monitorizadas = metricas_monitorizaradas;
     }
 }

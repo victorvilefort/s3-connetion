@@ -1,10 +1,16 @@
-package school.sptech;
+package school.sptech.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import school.sptech.dto.ResponseDTO;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Reader {
     public void readContent(S3Client s3Client, String bucketName, String fileName) {
@@ -18,15 +24,21 @@ public class Reader {
         try(ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(getObjectRequest)){
             ObjectMapper objectMapper = new ObjectMapper();
 
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+            javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
+            objectMapper.registerModule(javaTimeModule);
+
             ResponseDTO responseDTO = objectMapper.readValue(inputStream, ResponseDTO.class);
             System.out.println("--- CONTEÚDO DO JSON CONSUMIDO DA GOLD ---");
-            System.out.println("ID Servidor: " + responseDTO.getId_servidor());
-            System.out.println("Apelido: " + responseDTO.getApelido());
-            System.out.println("Empresa: " + responseDTO.getEmpresa());
-            System.out.println("Data: " + responseDTO.getTimestamp());
+            String jsonFormated = objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(responseDTO);
+            System.out.println(jsonFormated);
 
-            if (responseDTO.getMetricas_monitoradas() != null) {
-                System.out.println("Quantidade de métricas monitoradas: " + responseDTO.getMetricas_monitoradas().size());
+            if (responseDTO.getMetricas_monitorizadas() != null) {
+                System.out.println("Quantidade de métricas monitoradas: " + responseDTO.getMetricas_monitorizadas().size());
             }
             System.out.println("----------------------------------------");
 

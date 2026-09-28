@@ -1,5 +1,7 @@
 package school.sptech;
 
+import school.sptech.config.S3Provider;
+import school.sptech.service.Reader;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -73,7 +75,7 @@ public class Main {
                 reader.readContent(
                         s3Client,
                         bucketName,
-                        "victor.csv"
+                        "teste-servidor.json"
                 );
             }
 
