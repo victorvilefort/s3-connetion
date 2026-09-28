@@ -10,13 +10,21 @@ public class Main {
     public static void main(String[] args) {
 
         String bucketName = "amazn-s3-vilefort";
-
-        try (S3Client s3Client = S3Provider.createClient()){
+        try (S3Client s3Client = S3Provider.createClient()) {
             System.out.printf("""
-                    Conexão realizada com sucesso!
-                    ---------------------------------
-                    Listando arquivos do bucket: %s
-                    %n""", bucketName);
+            
+            ╔══════════════════════════════════════════════╗
+            ║          CONEXÃO COM AMAZON S3              ║
+            ╠══════════════════════════════════════════════╣
+            ║  ✓ Conexão realizada com sucesso!          ║
+            ║                                              ║
+            ║  Bucket: %-34s ║
+            ╚══════════════════════════════════════════════╝
+            
+            """, bucketName);
+
+            System.out.println("Arquivos encontrados:");
+            System.out.println("──────────────────────────────────────────────");
 
             ListObjectsV2Request request = ListObjectsV2Request.builder()
                     .bucket(bucketName)
