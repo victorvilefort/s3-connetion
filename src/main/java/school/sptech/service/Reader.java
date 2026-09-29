@@ -3,7 +3,9 @@ package school.sptech.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import school.sptech.dto.MetricasDTO;
 import school.sptech.dto.ResponseDTO;
+import school.sptech.repository.JiraRepository;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -21,9 +23,8 @@ public class Reader {
 
         System.out.println("Conectando ao S3 e baixando o fluxo do arquivo...");
 
-        try(ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(getObjectRequest)){
+        try (ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(getObjectRequest)) {
             ObjectMapper objectMapper = new ObjectMapper();
-
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -32,19 +33,81 @@ public class Reader {
             objectMapper.registerModule(javaTimeModule);
 
             ResponseDTO responseDTO = objectMapper.readValue(inputStream, ResponseDTO.class);
-            System.out.println("--- CONTEÚDO DO JSON CONSUMIDO DA GOLD ---");
-            String jsonFormated = objectMapper.writerWithDefaultPrettyPrinter()
+
+            String responseJSON = objectMapper.writerWithDefaultPrettyPrinter()
                     .writeValueAsString(responseDTO);
-            System.out.println(jsonFormated);
+
+            System.out.println(responseJSON);
+
+            Boolean dispararAlerta = false;
+            String componente = "";
+            Double valor = 0.0;
+            String unidade = "";
+            Double limiteMax = 0.0;
 
             if (responseDTO.getMetricas_monitorizadas() != null) {
-                System.out.println("Quantidade de métricas monitoradas: " + responseDTO.getMetricas_monitorizadas().size());
+                for (MetricasDTO metricasDTO : responseDTO.getMetricas_monitorizadas()) {
+                    if (metricasDTO.getEm_alerta() != null && metricasDTO.getEm_alerta()) {
+                        componente = metricasDTO.getComponente();
+                        valor = metricasDTO.getValor_medido();
+                        unidade = metricasDTO.getUnidade_medida();
+                        limiteMax = metricasDTO.getLimite_max();
+                        dispararAlerta = true;;
+                        break;
+                    }
+                }
             }
-            System.out.println("----------------------------------------");
+
+            if (dispararAlerta) {
+                System.out.println("Abrindo chamado no jira...");
+
+                System.out.println("Buscando no banco pelo MAC enviado pelo JSON: [" + responseDTO.getEndereco_mac() + "]");
+
+                JiraRepository repository = new JiraRepository();
+                JiraRepository.JiraConfig config = repository.findByMac(responseDTO.getEndereco_mac());
+
+                if (config != null) {
+                    JiraService jiraService = new JiraService(config);
+
+                    String tipoChamado = "10010";
+
+                    String title = "🚨 ALERTA: Componente [%s] em nível crítico no servidor %s"
+                            .formatted(componente, responseDTO.getApelido());
+
+                    String description = """
+                        
+                        🖥️ SERVIDOR : %s (MAC: %s)
+                        🏢 Empresa  : %s
+                        📍 Local    : %s (%s) | 🕒 Horário: %s
+                        -------------------------------------------------------------
+                        📊 Componente: %s
+                        📈 Valor     : %.2f %s (Limite: %.2f)
+                        =============================================================
+                        """.formatted(
+                            responseDTO.getApelido(),
+                            responseDTO.getEndereco_mac(),
+                            responseDTO.getEmpresa(),
+                            responseDTO.getLocalizacao_km(),
+                            responseDTO.getSentido(),
+                            responseDTO.getTimestamp(),
+                            componente,
+                            valor,
+                            unidade != null ? unidade : "",
+                            limiteMax
+                    );
+
+                    String responseJira = jiraService.createIssue(config.projectKey(), title, description, tipoChamado);
+                    System.out.println("🚀 Chamado aberto com sucesso! Resposta do Jira:\n" + responseJira);
+                } else {
+                    System.out.println(" ❌ Alerta gerado, mas nenhuma credencial do Jira foi encontrada no Banco!");
+                }
+            } else {
+                System.out.println(" ✅ Todas as métricas estão normais. Nenhuma ação necessária.");
+            }
 
         } catch (Exception e) {
             System.err.println("Erro ao processar arquivos do S3: " + e.getMessage());
-            e.printStackTrace(); // Ajuda a ver a pilha de erro completa se algo falhar
+            e.printStackTrace();
         }
     }
 }

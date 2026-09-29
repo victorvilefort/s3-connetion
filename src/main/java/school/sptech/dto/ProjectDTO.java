@@ -1,6 +1,9 @@
 package school.sptech.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProjectDTO {
+    @JsonProperty("key")
     private String key;
 
     public ProjectDTO() {

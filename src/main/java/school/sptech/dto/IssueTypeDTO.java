@@ -1,20 +1,23 @@
 package school.sptech.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class IssueTypeDTO {
-    private String name;
+    @JsonProperty("id")
+    String id;
 
     public IssueTypeDTO() {
     }
 
-    public IssueTypeDTO(String name) {
-        this.name = name;
+    public IssueTypeDTO(String id) {
+        this.id = id    ;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 }
