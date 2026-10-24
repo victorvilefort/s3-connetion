@@ -1,4 +1,5 @@
 package school.sptech.dto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +15,8 @@ public class ResponseDTO {
     @JsonProperty private String empresa;
     @JsonProperty private String localizacao_km;
     @JsonProperty private String sentido;
-    @JsonProperty private java.time.LocalDateTime timestamp;
+    @JsonFormat(pattern = "[yyyy-MM-dd HH:mm:ss][dd/MM/yyyy HH:mm:ss]")
+    private LocalDateTime timestamp;
     @JsonProperty private List<MetricasDTO> metricas_monitorizadas;
 
     public ResponseDTO() {

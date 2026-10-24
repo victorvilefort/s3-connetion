@@ -75,15 +75,15 @@ public class Reader {
                             .formatted(componente, responseDTO.getApelido());
 
                     String description = """
-                        
-                        🖥️ SERVIDOR : %s (MAC: %s)
-                        🏢 Empresa  : %s
-                        📍 Local    : %s (%s) | 🕒 Horário: %s
-                        -------------------------------------------------------------
-                        📊 Componente: %s
-                        📈 Valor     : %.2f %s (Limite: %.2f)
-                        =============================================================
-                        """.formatted(
+                            
+                            🖥️ SERVIDOR : %s (MAC: %s)
+                            🏢 Empresa  : %s
+                            📍 Local    : %s (%s) | 🕒 Horário: %s
+                            -------------------------------------------------------------
+                            📊 Componente: %s
+                            📈 Valor     : %.2f %s (Limite: %.2f)
+                            =============================================================
+                            """.formatted(
                             responseDTO.getApelido(),
                             responseDTO.getEndereco_mac(),
                             responseDTO.getEmpresa(),
