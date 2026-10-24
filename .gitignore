@@ -42,3 +42,4 @@ build/
 /src/main/java/school/sptech/ConnectionJDBC.java
 
 
+src/main/java/school/sptech/utils/Credentials.java
